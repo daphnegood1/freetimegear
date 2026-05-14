@@ -1,0 +1,781 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>從裝備到智慧：墾趣 AI 自動化戶外用品零售實戰專班</title>
+  <style>
+    :root {
+      --ink: #1f2a24;
+      --muted: #5e6a63;
+      --line: #dce3dd;
+      --paper: #f7f6f0;
+      --white: #ffffff;
+      --forest: #264b36;
+      --moss: #657b4d;
+      --sage: #dbe4d1;
+      --sun: #d79b45;
+      --sky: #d8e6ee;
+      --shadow: 0 16px 40px rgba(31, 42, 36, .12);
+      --radius: 8px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--paper);
+      font-family: "Noto Sans TC", "Microsoft JhengHei", Arial, sans-serif;
+      line-height: 1.72;
+    }
+
+    a { color: inherit; }
+    img { max-width: 100%; display: block; }
+    .skip {
+      position: absolute;
+      left: -999px;
+      top: 1rem;
+      background: var(--forest);
+      color: #fff;
+      padding: .5rem .75rem;
+      border-radius: var(--radius);
+      z-index: 20;
+    }
+    .skip:focus { left: 1rem; }
+
+    .hero {
+      min-height: 78vh;
+      display: grid;
+      align-items: end;
+      color: #fff;
+      background:
+        linear-gradient(180deg, rgba(20, 38, 28, .24), rgba(20, 38, 28, .86)),
+        url("ai_course_handout/images/sea_to_summit_telos3_tent.jpg") center / cover no-repeat;
+    }
+    .hero-inner {
+      width: min(1120px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 88px 0 56px;
+    }
+    .eyebrow {
+      display: inline-flex;
+      gap: .5rem;
+      align-items: center;
+      color: #fff;
+      background: rgba(255, 255, 255, .18);
+      border: 1px solid rgba(255, 255, 255, .28);
+      padding: .35rem .7rem;
+      border-radius: 999px;
+      font-size: .9rem;
+      backdrop-filter: blur(10px);
+    }
+    h1 {
+      max-width: 880px;
+      margin: 20px 0 16px;
+      font-size: clamp(2rem, 5vw, 4.6rem);
+      line-height: 1.12;
+      letter-spacing: 0;
+    }
+    .hero p {
+      max-width: 820px;
+      margin: 0 0 28px;
+      color: rgba(255, 255, 255, .9);
+      font-size: clamp(1rem, 2vw, 1.25rem);
+    }
+    .hero-actions,
+    .nav-grid,
+    .product-grid,
+    .metric-grid,
+    .lesson-grid,
+    .time-grid,
+    .prompt-grid,
+    .benefit-grid {
+      display: grid;
+      gap: 16px;
+    }
+    .hero-actions {
+      grid-template-columns: repeat(auto-fit, minmax(170px, max-content));
+    }
+    .btn {
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 44px;
+      padding: .68rem 1rem;
+      border-radius: var(--radius);
+      border: 1px solid rgba(255, 255, 255, .36);
+      text-decoration: none;
+      font-weight: 700;
+      background: rgba(255, 255, 255, .14);
+      color: #fff;
+    }
+    .btn.primary {
+      background: var(--sun);
+      border-color: var(--sun);
+      color: #1e221a;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: rgba(247, 246, 240, .95);
+      border-bottom: 1px solid var(--line);
+      backdrop-filter: blur(12px);
+    }
+    .topbar nav {
+      width: min(1120px, calc(100% - 32px));
+      margin: 0 auto;
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding: 10px 0;
+    }
+    .topbar a {
+      white-space: nowrap;
+      text-decoration: none;
+      border: 1px solid var(--line);
+      background: #fff;
+      border-radius: 999px;
+      padding: .45rem .78rem;
+      font-size: .92rem;
+      color: var(--forest);
+    }
+
+    main section {
+      width: min(1120px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 64px 0;
+      border-bottom: 1px solid var(--line);
+    }
+    h2 {
+      margin: 0 0 12px;
+      font-size: clamp(1.65rem, 3vw, 2.55rem);
+      line-height: 1.22;
+      letter-spacing: 0;
+    }
+    h3 {
+      margin: 0 0 10px;
+      font-size: 1.22rem;
+      line-height: 1.35;
+      letter-spacing: 0;
+    }
+    h4 {
+      margin: 0 0 8px;
+      font-size: 1rem;
+      letter-spacing: 0;
+    }
+    .lead {
+      max-width: 860px;
+      margin: 0 0 28px;
+      color: var(--muted);
+      font-size: 1.05rem;
+    }
+    .band {
+      width: 100%;
+      background: #eef2ea;
+    }
+    .band section { border-bottom: 0; }
+
+    .card,
+    .product,
+    .prompt,
+    .timeline,
+    .callout {
+      background: var(--white);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: 0 8px 28px rgba(31, 42, 36, .06);
+    }
+    .card { padding: 22px; }
+    .callout {
+      padding: 22px;
+      border-left: 6px solid var(--moss);
+    }
+    .nav-grid {
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    }
+    .nav-grid a {
+      min-height: 128px;
+      text-decoration: none;
+      padding: 18px;
+      color: var(--ink);
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+    }
+    .nav-grid strong {
+      display: block;
+      color: var(--forest);
+      font-size: 1.08rem;
+      margin-bottom: 6px;
+    }
+    .nav-grid span { color: var(--muted); font-size: .95rem; }
+
+    .metric-grid,
+    .benefit-grid {
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    }
+    .metric {
+      padding: 18px;
+      background: var(--forest);
+      color: #fff;
+      border-radius: var(--radius);
+      min-height: 120px;
+    }
+    .metric b {
+      display: block;
+      font-size: 1.8rem;
+      line-height: 1;
+      margin-bottom: 8px;
+      color: #f4d6a4;
+    }
+
+    .product-grid {
+      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    }
+    .product { overflow: hidden; }
+    .product img {
+      width: 100%;
+      aspect-ratio: 4 / 3;
+      object-fit: contain;
+      background: #f4f5f1;
+      padding: 16px;
+    }
+    .product div { padding: 16px; }
+    .tag {
+      display: inline-flex;
+      margin-bottom: 8px;
+      padding: .18rem .5rem;
+      background: var(--sage);
+      border-radius: 999px;
+      color: var(--forest);
+      font-size: .78rem;
+      font-weight: 700;
+    }
+
+    .day {
+      padding-top: 76px;
+    }
+    .day-head {
+      display: grid;
+      grid-template-columns: 1fr minmax(240px, 360px);
+      gap: 28px;
+      align-items: stretch;
+      margin-bottom: 28px;
+    }
+    .infographic {
+      background: var(--forest);
+      color: #fff;
+      border-radius: var(--radius);
+      padding: 24px;
+      display: grid;
+      gap: 14px;
+      box-shadow: var(--shadow);
+    }
+    .info-row {
+      display: grid;
+      grid-template-columns: 72px 1fr;
+      gap: 12px;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255,255,255,.16);
+    }
+    .info-row:last-child { border-bottom: 0; }
+    .info-row b {
+      color: #f4d6a4;
+      font-size: 1.4rem;
+      line-height: 1;
+    }
+    .lesson-grid {
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      margin: 24px 0;
+    }
+    .time-grid {
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      margin: 18px 0 26px;
+    }
+    .time {
+      padding: 14px;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+    }
+    .time strong {
+      display: block;
+      color: var(--forest);
+    }
+
+    .prompt-grid {
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    }
+    .prompt {
+      overflow: hidden;
+    }
+    .prompt header {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      padding: 14px 16px;
+      background: #eef2ea;
+      border-bottom: 1px solid var(--line);
+    }
+    .copy {
+      appearance: none;
+      border: 1px solid var(--moss);
+      background: #fff;
+      color: var(--forest);
+      border-radius: var(--radius);
+      padding: .42rem .65rem;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    pre {
+      margin: 0;
+      padding: 16px;
+      overflow-x: auto;
+      white-space: pre-wrap;
+      word-break: break-word;
+      font-family: "Noto Sans TC", "Microsoft JhengHei", Arial, sans-serif;
+      font-size: .95rem;
+      line-height: 1.72;
+      background: #fff;
+    }
+    ul, ol { padding-left: 1.25rem; }
+    li + li { margin-top: .35rem; }
+    .two-col {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
+    .footer {
+      padding: 36px 16px 56px;
+      text-align: center;
+      color: var(--muted);
+    }
+
+    @media (max-width: 760px) {
+      .hero { min-height: 74vh; }
+      .hero-inner { padding: 72px 0 40px; }
+      main section { padding: 48px 0; }
+      .day-head,
+      .two-col {
+        grid-template-columns: 1fr;
+      }
+      .topbar nav {
+        width: calc(100% - 20px);
+      }
+      .card { padding: 18px; }
+      .info-row { grid-template-columns: 58px 1fr; }
+      .prompt header {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+      .copy { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip" href="#overview">跳到課程總覽</a>
+  <header class="hero">
+    <div class="hero-inner">
+      <span class="eyebrow">墾趣國際股份有限公司｜AI 職能提升班企業專班</span>
+      <h1>從裝備到智慧：墾趣 AI 自動化戶外用品零售實戰專班</h1>
+      <p>以商品企劃、會員經營、內容產製與營運自動化為主軸，把 AI 直接放進墾趣同仁每天會遇到的商品上架、導購支援、會員溝通、素材製作與報表流程。</p>
+      <div class="hero-actions">
+        <a class="btn primary" href="#days">查看五天課程</a>
+        <a class="btn" href="#products">查看商品案例</a>
+      </div>
+    </div>
+  </header>
+
+  <div class="topbar" aria-label="課程導覽">
+    <nav>
+      <a href="#overview">總覽</a>
+      <a href="#products">五個商品</a>
+      <a href="#day1">Day 1</a>
+      <a href="#day2">Day 2</a>
+      <a href="#day3">Day 3</a>
+      <a href="#day4">Day 4</a>
+      <a href="#day5">Day 5</a>
+      <a href="#faculty">師資</a>
+      <a href="#outcomes">成效評估</a>
+    </nav>
+  </div>
+
+  <main>
+    <section id="overview">
+      <h2>課程目標</h2>
+      <p class="lead">墾趣面對商品品項多、規格複雜、品牌活動頻繁、會員經營需求提升與跨部門資訊彙整量大的營運現場，本課程把 AI 設計成可複製的工作方法，而不只是單次工具示範。</p>
+      <div class="metric-grid">
+        <div class="metric"><b>01</b>商品知識結構化，降低導購與教育訓練仰賴個人經驗的成本。</div>
+        <div class="metric"><b>02</b>會員資料分群與溝通腳本生成，提升活動精準度與回購經營效率。</div>
+        <div class="metric"><b>03</b>加速商品文案、社群貼文、LINE 推播、EDM 與短影音腳本產製。</div>
+        <div class="metric"><b>04</b>建立報表整理、名單更新、活動通知與資料轉換的自動化流程原型。</div>
+      </div>
+    </section>
+
+    <div class="band">
+      <section>
+        <h2>課程基本資訊</h2>
+      <div class="two-col">
+        <div class="card">
+          <h3>培訓設定</h3>
+          <ul>
+              <li>計畫：115-116 年度強化服務業人才韌性計畫「AI 職能提升班-企業專班」</li>
+              <li>課程名稱：從裝備到智慧：墾趣 AI 自動化戶外用品零售實戰專班</li>
+              <li>企業：墾趣國際股份有限公司</li>
+              <li>統一編號：84108053</li>
+              <li>產業別：零售業，戶外用品通路</li>
+              <li>職能類別：營運管理</li>
+              <li>培訓課程：智慧零售 AI 應用</li>
+              <li>課程日期：預計於 7 到 9 月辦理完成，共 5 天 30 小時</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>參訓對象</h3>
+            <p>商品企劃、行銷業務、會員經營、電商營運、門市管理、行政營運等職能同仁。課堂以跨部門共同實作為設計，讓商品知識、會員分群、行銷內容與營運流程在課堂中直接對接實際工作場景。</p>
+          </div>
+        </div>
+        <div class="callout" style="margin-top:18px">
+          <h3>教學方法與工具原則</h3>
+          <p>課程以講授、示範、分組實作與成果發表進行，讓學員在課程中完成可供企業後續使用的知識模板、溝通腳本、內容素材與流程原型。主要以 Google Workspace 相關 AI 工具作為培訓載體，因其能銜接企業既有文件、表單、雲端資料、郵件與協作流程，可直接應用於商品知識整理、會員資料清理、分眾內容生成、營運報表分析與通知流程自動化。</p>
+        </div>
+      </section>
+    </div>
+
+    <section id="days">
+      <h2>五天課程導覽</h2>
+      <p class="lead">每一天都是獨立講義，也會延續同一組商品案例，讓學員從 AI 應用藍圖一路做到可落地的流程改善清單。</p>
+      <div class="nav-grid">
+        <a href="#day1"><strong>Day 1 AI 轉型藍圖</strong><span>痛點盤點、AI 應用架構、Google Workspace AI 情境。</span></a>
+        <a href="#day2"><strong>Day 2 商品企劃升級</strong><span>商品知識庫、比較表、FAQ、導購話術。</span></a>
+        <a href="#day3"><strong>Day 3 會員經營升級</strong><span>會員分群、標籤、回購設計、分眾溝通。</span></a>
+        <a href="#day4"><strong>Day 4 內容轉換實戰</strong><span>商品頁文案、社群貼文、LINE 推播、短影音。</span></a>
+        <a href="#day5"><strong>Day 5 流程落地與資安</strong><span>報表、名單、通知、自動化流程與 AI 資安法規。</span></a>
+      </div>
+    </section>
+
+    <section id="products">
+      <h2>五個貫穿課程的墾趣商品</h2>
+      <p class="lead">這五個商品橫跨服飾、鞋類、水瓶、登山杖與帳篷。每天的 Prompt 都會回到這些商品，讓學員練習把 AI 用在真實商品與真實會員情境。</p>
+      <div class="product-grid">
+        <article class="product">
+          <img src="ai_course_handout/images/montura_rise_shirt.jpg" alt="MONTURA Rise 排汗上衣">
+          <div><span class="tag">服飾</span><h3>MONTURA Rise 排汗上衣</h3><p>適合練習商品賣點整理、穿搭情境、門市導購與社群貼文。</p></div>
+        </article>
+        <article class="product">
+          <img src="ai_course_handout/images/aku_rocket_dfs_gtx.jpg" alt="AKU ROCKET DFS GTX 登山鞋">
+          <div><span class="tag">鞋類</span><h3>AKU ROCKET DFS GTX 登山鞋</h3><p>適合練習規格比較、客群分級、登山情境推薦與 FAQ。</p></div>
+        </article>
+        <article class="product">
+          <img src="ai_course_handout/images/camelbak_podium_bottle.jpg" alt="CamelBak Podium 運動水瓶">
+          <div><span class="tag">水瓶</span><h3>CamelBak Podium 運動水瓶</h3><p>適合練習會員加購推薦、短文案、LINE 推播與電商商品頁。</p></div>
+        </article>
+        <article class="product">
+          <img src="ai_course_handout/images/fizan_trekking_poles.jpg" alt="FIZAN 登山杖">
+          <div><span class="tag">登山杖</span><h3>FIZAN 登山杖</h3><p>適合練習新手教育、門市話術、比較推薦與短影音分鏡。</p></div>
+        </article>
+        <article class="product">
+          <img src="ai_course_handout/images/sea_to_summit_telos3_tent.jpg" alt="Sea to Summit Telos 3 帳篷">
+          <div><span class="tag">帳篷</span><h3>Sea to Summit Telos 3 帳篷</h3><p>適合練習高單價商品說明、露營客群、活動企劃與知識庫。</p></div>
+        </article>
+      </div>
+    </section>
+
+    <section id="day1" class="day">
+      <div class="day-head">
+        <div>
+          <span class="tag">Day 1｜09:30-16:30</span>
+          <h2>AI 驅動戶外零售轉型：趨勢解析與應用藍圖</h2>
+          <p class="lead">從墾趣商品、會員、內容與營運流程痛點出發，建立同仁對 AI 應用場景的共同語言，並排定各部門最值得先做的 AI 任務。</p>
+        </div>
+        <div class="infographic" aria-label="Day 1 學習效益資訊圖表">
+          <div class="info-row"><b>看見</b><span>AI 在戶外用品零售的可用場景</span></div>
+          <div class="info-row"><b>盤點</b><span>商品、會員、內容、營運四大痛點</span></div>
+          <div class="info-row"><b>排序</b><span>建立部門 AI 應用優先順序</span></div>
+        </div>
+      </div>
+      <div class="time-grid">
+        <div class="time"><strong>09:30-10:30</strong>戶外零售趨勢與 AI 應用方向</div>
+        <div class="time"><strong>10:40-12:00</strong>墾趣四大營運痛點盤點</div>
+        <div class="time"><strong>13:00-14:20</strong>商品、會員、內容、流程 AI 架構</div>
+        <div class="time"><strong>14:30-15:20</strong>Google Workspace AI 工具情境</div>
+        <div class="time"><strong>15:30-16:30</strong>分組建立 AI 應用優先順序</div>
+      </div>
+      <div class="lesson-grid">
+        <div class="card"><h3>學習內容 1：戶外零售 AI 地圖</h3><p>用五個商品建立學員共同語言：商品知識、客群情境、素材需求、名單資料與流程自動化，都是 AI 能協助的工作面。</p></div>
+        <div class="card"><h3>學習內容 2：工作流程盤點</h3><p>請各組選一個部門流程，拆成輸入資料、人工判斷、產出內容、交付對象與卡點，找出最適合 AI 介入的環節。</p></div>
+        <div class="card"><h3>學習內容 3：Google Workspace 情境</h3><p>以 Docs、Sheets、Slides、Gmail、Drive 與 Gemini 為主要載體，降低額外導入門檻。</p></div>
+      </div>
+      <div class="prompt-grid">
+        <article class="prompt">
+          <header><h4>Prompt：部門痛點盤點</h4><button class="copy" data-copy>複製</button></header>
+          <pre>你是戶外用品零售業的 AI 導入顧問。請協助墾趣的【部門名稱】盤點日常工作中最適合導入 AI 的任務。請依照以下欄位輸出表格：工作任務、目前資料來源、人工處理痛點、可用 AI 協助的方式、預期節省時間、導入難度、優先順序。請優先考慮商品企劃、會員經營、內容產製、營運報表與跨部門通知。</pre>
+        </article>
+        <article class="prompt">
+          <header><h4>Prompt：五商品應用情境</h4><button class="copy" data-copy>複製</button></header>
+          <pre>請以墾趣的五個商品為案例：MONTURA Rise 排汗上衣、AKU ROCKET DFS GTX 登山鞋、CamelBak Podium 運動水瓶、FIZAN 登山杖、Sea to Summit Telos 3 帳篷。請幫我整理每個商品可以用 AI 支援的工作情境，包含商品知識整理、門市導購、會員分群推薦、社群圖文、短影音腳本、報表與流程自動化。</pre>
+        </article>
+      </div>
+    </section>
+
+    <section id="day2" class="day">
+      <div class="day-head">
+        <div>
+          <span class="tag">Day 2｜09:30-16:30</span>
+          <h2>戶外商品企劃升級：AI 導購設計與商品策略實戰</h2>
+          <p class="lead">把複雜的戶外商品規格轉成同仁看得懂、門市說得出、會員聽得進去的商品知識卡、比較表、FAQ 與導購模板。</p>
+        </div>
+        <div class="infographic" aria-label="Day 2 學習效益資訊圖表">
+          <div class="info-row"><b>整理</b><span>規格、功能、情境、客群、購買理由</span></div>
+          <div class="info-row"><b>轉換</b><span>品牌資料變成知識庫與 FAQ</span></div>
+          <div class="info-row"><b>輸出</b><span>商品比較表、知識卡、導購模板</span></div>
+        </div>
+      </div>
+      <div class="time-grid">
+        <div class="time"><strong>09:30-10:20</strong>戶外商品企劃核心邏輯</div>
+        <div class="time"><strong>10:30-11:40</strong>商品比較與情境推薦</div>
+        <div class="time"><strong>11:40-12:00</strong>客群分級設計</div>
+        <div class="time"><strong>13:00-14:10</strong>NotebookLM 商品知識庫與 FAQ</div>
+        <div class="time"><strong>14:20-15:20</strong>Gemini 賣點與導購話術</div>
+        <div class="time"><strong>15:30-16:30</strong>完成商品比較表與導購模板</div>
+      </div>
+      <div class="lesson-grid">
+        <div class="card"><h3>學習內容 1：商品知識卡</h3><p>每張商品卡必須包含品牌、類別、使用情境、核心規格、目標客群、購買理由、常見疑問與門市提醒。</p></div>
+        <div class="card"><h3>學習內容 2：比較表</h3><p>以登山鞋、排汗上衣、帳篷等商品建立橫向比較，讓新人快速理解差異，也讓行銷可快速轉成文案。</p></div>
+        <div class="card"><h3>學習內容 3：導購話術</h3><p>用 AI 把技術規格轉成「先問需求、再推薦、再處理疑慮」的門市對話。</p></div>
+      </div>
+      <div class="prompt-grid">
+        <article class="prompt">
+          <header><h4>Prompt：商品知識卡</h4><button class="copy" data-copy>複製</button></header>
+          <pre>請幫我把以下商品整理成墾趣門市與電商都可使用的商品知識卡。商品：AKU ROCKET DFS GTX 登山鞋。請輸出：1. 一句話定位 2. 適合客群 3. 三個主要賣點 4. 使用情境 5. 與一般健走鞋的差異 6. 顧客常見問題與回答 7. 門市導購提醒。語氣要專業、好懂，避免過度誇大。</pre>
+        </article>
+        <article class="prompt">
+          <header><h4>Prompt：五商品比較表</h4><button class="copy" data-copy>複製</button></header>
+          <pre>請用表格比較以下五個墾趣商品：MONTURA Rise 排汗上衣、AKU ROCKET DFS GTX 登山鞋、CamelBak Podium 運動水瓶、FIZAN 登山杖、Sea to Summit Telos 3 帳篷。欄位包含：商品角色、主要使用場景、適合客群、顧客購買理由、可搭配銷售商品、門市一句話推薦。</pre>
+        </article>
+        <article class="prompt">
+          <header><h4>Prompt：導購對話</h4><button class="copy" data-copy>複製</button></header>
+          <pre>你是墾趣資深門市顧問。請針對「第一次要買登山杖的新手顧客」設計 FIZAN 登山杖的導購對話腳本。請包含：開場提問、需求判斷、產品推薦、使用方式提醒、常見疑慮回覆、結尾加購建議。語氣自然，不要像硬銷。</pre>
+        </article>
+      </div>
+    </section>
+
+    <section id="day3" class="day">
+      <div class="day-head">
+        <div>
+          <span class="tag">Day 3｜09:30-16:30</span>
+          <h2>戶外會員經營升級：AI 分群溝通與回購設計實戰</h2>
+          <p class="lead">將會員資料整理成可行動的標籤，針對新手露營、登山客、家庭客、鞋類客群等分眾生成推薦與溝通腳本。</p>
+        </div>
+        <div class="infographic" aria-label="Day 3 學習效益資訊圖表">
+          <div class="info-row"><b>分群</b><span>從會員資料看出需求與購買路徑</span></div>
+          <div class="info-row"><b>溝通</b><span>產出 EDM、LINE、活動邀請、商品推薦</span></div>
+          <div class="info-row"><b>管理</b><span>用 Sheets 建立分眾名單與追蹤欄位</span></div>
+        </div>
+      </div>
+      <div class="time-grid">
+        <div class="time"><strong>09:30-10:20</strong>零售會員經營核心</div>
+        <div class="time"><strong>10:30-11:30</strong>標籤設計與資料整理</div>
+        <div class="time"><strong>11:30-12:00</strong>商品與客群推薦情境</div>
+        <div class="time"><strong>13:00-14:20</strong>AI 生成分眾溝通內容</div>
+        <div class="time"><strong>14:30-15:20</strong>Sheets 分眾名單管理</div>
+        <div class="time"><strong>15:30-16:30</strong>完成會員分群與溝通腳本</div>
+      </div>
+      <div class="lesson-grid">
+        <div class="card"><h3>學習內容 1：會員標籤</h3><p>用最近購買品類、活動參與、客單價、購買頻率與戶外情境建立簡單可維護的標籤。</p></div>
+        <div class="card"><h3>學習內容 2：回購與加購</h3><p>用水瓶、登山杖、鞋類保養、帳篷配件等商品設計加購與回購訊息。</p></div>
+        <div class="card"><h3>學習內容 3：分眾內容</h3><p>將同一個活動改寫成不同族群會在意的訊息，而不是所有會員收到同一段文案。</p></div>
+      </div>
+      <div class="prompt-grid">
+        <article class="prompt">
+          <header><h4>Prompt：會員分群標籤</h4><button class="copy" data-copy>複製</button></header>
+          <pre>你是墾趣會員經營顧問。請根據戶外用品零售情境，設計一套可在 Google Sheets 使用的會員分群標籤。請至少包含：新手露營、登山健行、越野跑、親子戶外、鞋類保養、水瓶補給、高單價裝備潛力客。每個標籤請說明判斷條件、適合推薦商品、適合溝通內容、建議追蹤欄位。</pre>
+        </article>
+        <article class="prompt">
+          <header><h4>Prompt：LINE 分眾訊息</h4><button class="copy" data-copy>複製</button></header>
+          <pre>請針對「近期購買登山鞋、但尚未購買登山杖」的墾趣會員，撰寫 3 則 LINE 推播訊息，推薦 FIZAN 登山杖。請分別對應：新手登山、週末健行、準備長路線。每則 80 字以內，包含標題、正文、行動呼籲，語氣自然且不過度推銷。</pre>
+        </article>
+        <article class="prompt">
+          <header><h4>Prompt：回購與加購設計</h4><button class="copy" data-copy>複製</button></header>
+          <pre>請以 CamelBak Podium 運動水瓶為核心，幫墾趣設計一個會員加購與回購方案。請輸出：目標客群、觸發條件、推薦搭配商品、LINE 訊息、EDM 主旨、門市提醒話術、Google Sheets 追蹤欄位。</pre>
+        </article>
+      </div>
+    </section>
+
+    <section id="day4" class="day">
+      <div class="day-head">
+        <div>
+          <span class="tag">Day 4｜09:30-16:30</span>
+          <h2>戶外商品內容轉換：AI 圖文影音與會員溝通素材實戰</h2>
+          <p class="lead">從商品策略轉成商品頁文案、社群貼文、LINE 推播、會員活動文案、情境圖規劃、短影音腳本與活動提案素材。</p>
+        </div>
+        <div class="infographic" aria-label="Day 4 學習效益資訊圖表">
+          <div class="info-row"><b>產文</b><span>商品頁、社群、EDM、LINE 快速生成</span></div>
+          <div class="info-row"><b>修圖</b><span>產品照改成情境圖、貼文圖與活動素材</span></div>
+          <div class="info-row"><b>影音</b><span>短影音腳本、分鏡、旁白與素材清單</span></div>
+        </div>
+      </div>
+      <div class="time-grid">
+        <div class="time"><strong>09:30-10:20</strong>商品策略到素材的轉換邏輯</div>
+        <div class="time"><strong>10:30-11:30</strong>商品頁文案、社群貼文、LINE 推播</div>
+        <div class="time"><strong>11:30-12:00</strong>會員活動文案與素材主題</div>
+        <div class="time"><strong>13:00-14:20</strong>產品照片修圖與情境圖 Prompt</div>
+        <div class="time"><strong>14:30-15:20</strong>短影音腳本與分鏡</div>
+        <div class="time"><strong>15:30-16:30</strong>完成商品圖文影音素材包</div>
+      </div>
+      <div class="lesson-grid">
+        <div class="card"><h3>學習內容 1：圖文貼文</h3><p>同一張商品照可以轉成新品介紹、情境推薦、會員活動、限時優惠與知識型內容。</p></div>
+        <div class="card"><h3>學習內容 2：修圖與情境圖</h3><p>練習把商品照片放進戶外場景，並保留商品真實性，不讓 AI 改掉重要外觀與品牌識別。</p></div>
+        <div class="card"><h3>學習內容 3：短影音素材包</h3><p>每個短影音腳本都要包含開頭鉤子、畫面分鏡、字幕、旁白、商品特寫與結尾行動。</p></div>
+      </div>
+      <div class="prompt-grid">
+        <article class="prompt">
+          <header><h4>Prompt：MONTURA 圖文貼文</h4><button class="copy" data-copy>複製</button></header>
+          <pre>請以 MONTURA Rise 排汗上衣為主角，撰寫一則適合墾趣 IG 與 Facebook 的圖文貼文。目標客群是週末健行與戶外旅行者。請輸出：貼文標題、120 字內正文、圖片上文字 10 字以內、3 個賣點、5 個 hashtag。語氣要專業、清爽、有戶外感。</pre>
+        </article>
+        <article class="prompt">
+          <header><h4>Prompt：AKU 商品修圖</h4><button class="copy" data-copy>複製</button></header>
+          <pre>請針對 AKU ROCKET DFS GTX 登山鞋的產品照片，產生一段給 AI 修圖工具使用的指令。目標是做成 4:5 社群貼文主視覺。請保留鞋子的真實外觀、顏色與品牌辨識，背景改成台灣中級山步道，地面有泥土與岩石，但畫面乾淨明亮。請加入自然光、戶外專業感，不要加入人物，不要改變鞋型。</pre>
+        </article>
+        <article class="prompt">
+          <header><h4>Prompt：Sea to Summit 短影音腳本</h4><button class="copy" data-copy>複製</button></header>
+          <pre>請幫墾趣規劃一支 30 秒短影音，主角是 Sea to Summit Telos 3 帳篷。目標客群是想升級露營裝備的會員。請輸出：影片標題、前三秒鉤子、6 個分鏡、每個分鏡畫面描述、字幕、旁白、需要拍攝的素材清單、結尾行動呼籲。語氣要像專業戶外用品顧問。</pre>
+        </article>
+        <article class="prompt">
+          <header><h4>Prompt：CamelBak LINE 推播</h4><button class="copy" data-copy>複製</button></header>
+          <pre>請幫墾趣撰寫 5 則 CamelBak Podium 運動水瓶的 LINE 推播短文。情境分別是：自行車、健走、健身房、親子戶外、夏季補水。每則 60 字以內，包含一個吸引人的開頭與一個行動呼籲。</pre>
+        </article>
+      </div>
+    </section>
+
+    <section id="day5" class="day">
+      <div class="day-head">
+        <div>
+          <span class="tag">Day 5｜09:30-16:30</span>
+          <h2>AI 流程落地實戰：會員營運 × 報表管理 × 自動化應用</h2>
+          <p class="lead">把前四天產出的商品知識、會員腳本與內容素材，整理成可維護的流程。最後加入 AI 資安法規與使用注意事項，完成課後可落地的改善清單。</p>
+        </div>
+        <div class="infographic" aria-label="Day 5 學習效益資訊圖表">
+          <div class="info-row"><b>串接</b><span>Sheets、Gmail、Drive 與通知流程</span></div>
+          <div class="info-row"><b>落地</b><span>完成商品、會員或營運流程優化方案</span></div>
+          <div class="info-row"><b>守則</b><span>理解 AI 使用下的資安與法規注意事項</span></div>
+        </div>
+      </div>
+      <div class="time-grid">
+        <div class="time"><strong>09:30-10:20</strong>重複性行政作業盤點</div>
+        <div class="time"><strong>10:30-11:30</strong>Sheets、Gmail、Drive 串接邏輯</div>
+        <div class="time"><strong>11:30-12:00</strong>報表、名單、通知、商品資料案例</div>
+        <div class="time"><strong>13:00-14:40</strong>分組設計 AI 流程優化方案</div>
+        <div class="time"><strong>14:40-15:30</strong>成果發表與講師回饋</div>
+        <div class="time"><strong>15:30-16:30</strong>AI 資安法規與課後改善清單</div>
+      </div>
+      <div class="lesson-grid">
+        <div class="card"><h3>學習內容 1：流程盤點</h3><p>從會員名單整理、活動通知、報表寄送、商品資料轉文案等重複任務中選擇一個流程優先改善。</p></div>
+        <div class="card"><h3>學習內容 2：自動化原型</h3><p>用 Google Sheets 管理資料，用 Gmail 或 LINE 設計通知內容，用 Drive 保存商品知識與素材包。</p></div>
+        <div class="card"><h3>學習內容 3：AI 資安法規</h3><p>提醒同仁避免把個資、機密營收、未公開活動、供應商合約直接貼入外部 AI；建立去識別化與審稿流程。</p></div>
+      </div>
+      <div class="prompt-grid">
+        <article class="prompt">
+          <header><h4>Prompt：流程改善清單</h4><button class="copy" data-copy>複製</button></header>
+          <pre>你是墾趣的 AI 流程改善顧問。請針對「會員活動名單整理與通知寄送」設計一個可落地流程。請輸出：流程目的、輸入資料、Google Sheets 欄位、AI 協助步驟、Gmail 或 LINE 通知內容產生方式、人工審核點、資安注意事項、預期節省時間、下週可執行的三個行動。</pre>
+        </article>
+        <article class="prompt">
+          <header><h4>Prompt：商品資料轉內容流程</h4><button class="copy" data-copy>複製</button></header>
+          <pre>請幫墾趣設計一個「商品資料轉成行銷素材」的 AI 工作流程。輸入資料包含商品名稱、品牌、類別、價格、圖片、規格、目標客群。輸出資料包含商品知識卡、社群貼文、LINE 推播、EDM 主旨、短影音腳本。請用表格列出每一步、使用工具、負責角色、檢查重點與可重複使用的 Prompt。</pre>
+        </article>
+        <article class="prompt">
+          <header><h4>Prompt：AI 資安檢查</h4><button class="copy" data-copy>複製</button></header>
+          <pre>請協助我檢查以下內容是否適合貼到外部 AI 工具。請依序判斷：是否包含個人資料、會員資料、營收或庫存機密、未公開促銷、供應商敏感資訊、著作權素材。若有風險，請提出去識別化改寫版本與安全使用建議。待檢查內容如下：【貼上內容】</pre>
+        </article>
+      </div>
+    </section>
+
+    <div class="band">
+      <section id="faculty">
+        <h2>師資與執行資訊</h2>
+        <p class="lead">講師群依大綱規劃，分別負責 AI 零售趨勢、商品企劃、會員經營、內容產製、流程落地與 AI 資安法規。</p>
+        <div class="lesson-grid">
+          <div class="card"><h3>黃淑姿</h3><p>財團法人資訊工業策進會組長。專長為零售業創新 AI 應用趨勢、企業流程痛點梳理、創新工作坊、AI 應用規劃設計。授課：AI 驅動戶外零售轉型、戶外商品企劃升級。</p></div>
+          <div class="card"><h3>徐雅玲</h3><p>成就數位股份有限公司專案總監。專長為 AI 生成工具教學、虛擬人、簡報生成、文案撰寫。授課：AI 驅動戶外零售轉型、戶外商品企劃升級。</p></div>
+          <div class="card"><h3>蔡承志</h3><p>好奇兄弟雲端股份有限公司多媒體設計師。專長為 AI 多媒體製作、AI 影片、動畫、圖片、音樂與元宇宙遊戲教學。授課：戶外會員經營升級、戶外商品內容轉換。</p></div>
+          <div class="card"><h3>張財銘</h3><p>成就數位股份有限公司董事長。專長為生成式 AI 課程設計、產業 AI 應用工具培訓、AI 代理人與 AI 導入策略。授課：AI 流程落地實戰。</p></div>
+          <div class="card"><h3>蘇鈺林</h3><p>成就數位股份有限公司系統工程師。專長為 Linux Server 管理、網路配置與管理、網路安全、VM 環境建置與安全資訊事件管理。授課：AI 資安法規。</p></div>
+          <div class="card"><h3>蔡馥璟</h3><p>成就數位股份有限公司專員。專長為生成式 AI 應用、AI 聲音生成、AI 虛擬人與 LLM 相關背景知識。角色：助教，支援 30 小時課程。</p></div>
+        </div>
+        <div class="two-col">
+          <div class="card">
+            <h3>授課地點</h3>
+            <p>銘傳大學台北校區電腦教室，111 臺北市士林區基河路 130 號 3 樓。交通方式：劍潭捷運站徒步約 8 分鐘。</p>
+          </div>
+          <div class="card">
+            <h3>執行管理</h3>
+            <p>執行專案人數 2 人。聯絡窗口：蔡明芳。行政人員：蔡孟珊。執課人員：蔡孟珊。應上傳文件包含附件八申請切結書；若與資通訊業者合作，應檢附合法設立證明文件。</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="outcomes">
+        <h2>預期效益與成效評估</h2>
+        <p class="lead">本課程完成後，墾趣將優先選定商品企業知識管理、會員活動分眾溝通及營運報表整理等三類場景試行，並由參訓同仁擔任部門種子人員，持續優化模板、腳本與流程原型。</p>
+        <div class="benefit-grid">
+          <div class="card"><h3>質化效益</h3><ul><li>建立商品企劃、行銷、會員與營運部門的 AI 共同語言。</li><li>降低商品資訊仰賴個人經驗的情形。</li><li>提升會員名單運用與活動溝通精準度。</li><li>加速商品文案、會員訊息與活動素材產出。</li><li>建立報表整理、名單更新、通知寄送等流程原型。</li></ul></div>
+          <div class="card"><h3>量化效益</h3><ul><li>培訓 31 名學員完成課程並取得結業證明。</li><li>完成 1 份商品知識庫雛形。</li><li>產出至少 3 組商品導購或 Prompt 模板。</li><li>產出至少 2 組會員分群與分眾溝通腳本。</li><li>產出至少 3 組商品圖文影音及會員溝通素材包。</li><li>完成至少 1 個自動化流程範例。</li><li>會員溝通、內容製作或資料整理效率預期提升 20% 到 30%。</li></ul></div>
+        </div>
+        <div class="callout" style="margin-top:18px">
+          <h3>課前與課後能力評估題項</h3>
+          <ol>
+            <li>我理解 AI 在商品企劃、會員經營、行銷業務與營運管理上的應用方式。</li>
+            <li>我能運用 AI 工具整理商品知識、賣點與導購資訊。</li>
+            <li>我能依會員特性進行基本分群與設計分眾溝通內容。</li>
+            <li>我能使用 AI 生成符合品牌需求的商品文案、會員文案、圖像或影音腳本。</li>
+            <li>我能運用 Google Sheets 進行會員資料或營運資料整理與分析。</li>
+            <li>我了解 AI 自動化流程如何應用於會員通知、名單整理、報表寄送等流程。</li>
+            <li>我能辨識自身工作中可優先導入 AI 的會員經營或營運流程。</li>
+            <li>我認為本課程內容與墾趣實際工作需求具高度關聯性。</li>
+          </ol>
+          <h3>學習主題 AI 能力題項</h3>
+          <ol>
+            <li>我能完成一份商品知識卡或商品比較表。</li>
+            <li>我能依會員特性設計至少一組分眾溝通腳本。</li>
+            <li>我能運用 AI 工具生成社群貼文、EDM 或 LINE 推播內容。</li>
+            <li>我能完成一項簡易資料整理或通知自動化流程設計。</li>
+            <li>我能針對部門實際問題提出 AI 應用改善方案。</li>
+          </ol>
+          <h3>課後應用與擴散規劃</h3>
+          <p>課程完成後，墾趣將優先選定商品企業知識管理、會員活動分眾溝通及營運報表整理等三類場景進行內部試行，並由參訓學員擔任部門種子人員，持續優化模板、腳本與流程原型。後續視執行情形逐步擴散至更多品牌活動、門市支援與通路經營場景，讓培訓形成企業內部持續使用的 AI 應用機制。</p>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <p>墾趣 AI 課程講義網站｜單一 HTML 版本｜依據「墾趣上課大綱.pdf」整理</p>
+  </footer>
+
+  <script>
+    document.querySelectorAll("[data-copy]").forEach(function(button) {
+      button.addEventListener("click", async function() {
+        var text = button.closest(".prompt").querySelector("pre").innerText;
+        try {
+          await navigator.clipboard.writeText(text);
+          var original = button.textContent;
+          button.textContent = "已複製";
+          setTimeout(function() { button.textContent = original; }, 1400);
+        } catch (error) {
+          var range = document.createRange();
+          range.selectNodeContents(button.closest(".prompt").querySelector("pre"));
+          var selection = window.getSelection();
+          selection.removeAllRanges();
+          selection.addRange(range);
+          button.textContent = "請手動複製";
+        }
+      });
+    });
+  </script>
+</body>
+</html>
