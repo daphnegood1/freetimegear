@@ -1,0 +1,21 @@
+# Local source documents and generated deliverables
+*.docx
+*.pdf
+*.pptx
+*.mp4
+*.gdoc
+artifact-build-manifest.json
+
+# Generated or local-only folders
+_codex_presentations/
+fizan-avatar-video/
+
+# Handout source files not needed by GitHub Pages
+ai_course_handout/*.pdf
+ai_course_handout/*.txt
+ai_course_handout/*.html
+
+# OS/editor noise
+desktop.ini
+**/desktop.ini
+~$*
